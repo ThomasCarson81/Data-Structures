@@ -4,6 +4,24 @@ using std::cout;
 using std::endl;
 using std::string;
 
+typedef struct LLNode
+{
+    string key = key;
+    string value = value;
+    LLNode *next = nullptr;
+    LLNode(string key, string value)
+    {
+        this->key = key;
+        this->value = value;
+    }
+    LLNode(string key, string value, LLNode *prev)
+    {
+        this->key = key;
+        this->value = value;
+        prev->next = this;
+    }
+};
+
 long long Hash(string input)
 {
     long long result = 1;
