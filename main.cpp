@@ -4,32 +4,10 @@
 using std::cin;
 using std::cout;
 using std::endl;
+using std::getline;
 using std::string;
 using std::vector;
 
-struct LLNode
-{
-    string key = key;
-    string value = value;
-    LLNode *next = nullptr;
-    LLNode()
-    {
-        this->key = "";
-        this->value = "";
-        cout << "Default constructor called" << endl;
-    }
-    LLNode(string key, string value)
-    {
-        this->key = key;
-        this->value = value;
-    }
-    LLNode(string key, string value, LLNode *prev)
-    {
-        this->key = key;
-        this->value = value;
-        prev->next = this;
-    }
-};
 unsigned long long Hash(string input)
 {
     unsigned long long result = 1;
@@ -39,25 +17,30 @@ unsigned long long Hash(string input)
     }
     return result;
 }
+
+struct KVPair
+{
+    string key;
+    string value;
+    // KVPair(string key, string value)
+    // {
+    //     this->key = key;
+    //     this->value = value;
+    // }
+};
+
 class Dict
 {
 public:
     int size;
-    vector<LLNode> vec;
+    vector<KVPair> vec;
     Dict(string key, string value, int size)
     {
         this->size = size;
-        vec.resize(size * sizeof(LLNode));
+        vec.resize(size * sizeof(KVPair));
         int index = Hash(key) % size;
-        if (vec[index].key == "")
-        {
-            vec[index].key = key;
-            vec[index].value = value;
-        }
-        else
-        {
-            new LLNode(key, value, &vec[index]);
-        }
+        vec[index].key = key;
+        vec[index].value = value;
     }
     string Get(string key)
     {
@@ -74,14 +57,8 @@ public:
     void Set(string key, string value)
     {
         int index = Hash(key) % size;
-        if (vec[index].key == key)
-        {
-            vec[index].value = value;
-        }
-        else
-        {
-            new LLNode(key, value, &vec[index]);
-        }
+        vec[index].key = key;
+        vec[index].value = value;
     }
 };
 
@@ -91,25 +68,38 @@ int main()
     cout << "Enter length of HashMap: ";
     cin >> len;
     string key, value;
-    cout << "Enter key: ";
-    cin >> key;
-    cout << "Enter value: ";
-    cin >> value;
+    cout << "Enter initial key: ";
+    while (key.empty())
+    {
+        getline(cin, key);
+    }
+    cout << "Enter initial value: ";
+    while (value.empty())
+    {
+        getline(cin, value);
+    }
     Dict dict(key, value, len);
     while (true)
     {
-        string input;
+        string key, value;
         cout << "Enter a key: ";
-        cin >> input;
-        string result = dict.Get(input);
+        while (key.empty())
+        {
+            getline(cin, key);
+        }
+        string result = dict.Get(key);
         if (!result.empty())
         {
             cout << "Value: " << result << endl;
         }
         else
         {
-            cout << "Enter a value:";
-            cin >> value;
+            cout << "Enter a value: ";
+            while (value.empty())
+            {
+                getline(cin, value);
+            }
+            dict.Set(key, value);
         }
     }
     return 0;
