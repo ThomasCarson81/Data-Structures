@@ -10,7 +10,7 @@ using std::vector;
 
 unsigned long long Hash(string input)
 {
-    unsigned long long result = 1;
+    unsigned long long result = 0;
     for (int i = 0; i < input.length(); i++)
     {
         result += input[i] * (i + 1);
@@ -22,11 +22,6 @@ struct KVPair
 {
     string key;
     string value;
-    // KVPair(string key, string value)
-    // {
-    //     this->key = key;
-    //     this->value = value;
-    // }
 };
 
 class Dict
