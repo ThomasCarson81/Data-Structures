@@ -41,13 +41,8 @@ public:
     {
         int index = Hash(key) % size;
         if (vec[index].key == key)
-        {
             return vec[index].value;
-        }
-        else
-        {
-            return "";
-        }
+        return "";
     }
     void Set(string key, string value)
     {
@@ -65,35 +60,25 @@ int main()
     string key, value;
     cout << "Enter initial key: ";
     while (key.empty())
-    {
         getline(cin, key);
-    }
     cout << "Enter initial value: ";
     while (value.empty())
-    {
         getline(cin, value);
-    }
     Dict dict(key, value, len);
     while (true)
     {
         string key, value;
         cout << "Enter a key: ";
         while (key.empty())
-        {
             getline(cin, key);
-        }
         string result = dict.Get(key);
         if (!result.empty())
-        {
             cout << "Value: " << result << endl;
-        }
         else
         {
             cout << "Enter a value: ";
             while (value.empty())
-            {
                 getline(cin, value);
-            }
             dict.Set(key, value);
         }
     }
