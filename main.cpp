@@ -24,6 +24,29 @@ struct KVPair
     string value;
 };
 
+struct DLLNode
+{
+    KVPair *pair;
+    DLLNode *prev;
+    DLLNode *next;
+};
+
+void Link(DLLNode *node1, DLLNode *node2)
+{
+    node1->next = node2;
+    node2->prev = node1;
+}
+void Set(DLLNode *node, *KVPair pair)
+{
+    node->pair = pair;
+}
+void Delete(DLLNode *node)
+{
+    node->prev->next = node->next;
+    node->next->prev = node->prev;
+    delete node;
+}
+
 class Dict
 {
 public:
