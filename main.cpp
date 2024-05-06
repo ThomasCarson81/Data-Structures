@@ -24,54 +24,178 @@ struct KVPair
     string value;
 };
 
-struct DLLNode
+class DLLNode
 {
+
+public:
     KVPair *pair;
     DLLNode *prev;
     DLLNode *next;
+    DLLNode() : pair(nullptr), prev(nullptr), next(nullptr) {}
+
+    ~DLLNode()
+    {
+        Delete();
+    }
+
+    void Delete()
+    {
+        if (prev != nullptr)   // if node is not head
+            prev->next = next; // link previous node to next
+        if (next != nullptr)   // if node is not tail
+            next->prev = prev; // link next node to previous
+        delete pair;
+    }
+
+    void Link(DLLNode *prevNode, DLLNode *nextNode)
+    {
+        prev = prevNode;
+        next = nextNode;
+    }
+
+    void Set(KVPair *newPair)
+    {
+        delete pair;
+        pair = new KVPair(*newPair);
+    }
+
+    /// @return string representation of the node
+    string Repr()
+    {
+        return "{\"" + pair->key + "\":\"" + pair->value + "\"}";
+    }
 };
 
-void Link(DLLNode *node1, DLLNode *node2)
+class DoublyLinkedList
 {
-    node1->next = node2;
-    node2->prev = node1;
-}
-void Set(DLLNode *node, KVPair *pair)
-{
-    node->pair = pair;
-}
-void Delete(DLLNode *node)
-{
-    node->prev->next = node->next;
-    node->next->prev = node->prev;
-    delete node;
-}
+private:
+    DLLNode *head;
+    DLLNode *tail;
+
+public:
+    DoublyLinkedList() : head(nullptr), tail(nullptr) {}
+
+    ~DoublyLinkedList()
+    {
+        DLLNode *node = head;
+        while (node)
+        {
+            DLLNode *next = node->next;
+            delete node;
+            node = next;
+        }
+    }
+
+    void Append(KVPair *pair)
+    {
+        DLLNode *node = new DLLNode();
+        node->Set(pair);
+        if (head == nullptr)
+        {
+            head = node;
+            tail = node;
+        }
+        else
+        {
+            tail->next = node;
+            node->prev = tail;
+            tail = node;
+        }
+    }
+
+    /// @brief Find a node with the given key
+    /// @param key Key to find
+    /// @return The node with the given key, or nullptr if not found
+    DLLNode *Find(string key)
+    {
+        DLLNode *node = head;
+        while (node) // while node is not null
+        {
+            if (node->pair->key == key)
+            {
+                return node;
+            }
+            node = node->next;
+        }
+        return nullptr; // Key not found
+    }
+
+    /// @brief Find the value associated with a key
+    /// @param key The key to find
+    /// @return The value associated with the given key, or an empty string if not found
+    string Get(string key)
+    {
+        DLLNode *node = head;
+        while (node)
+        {
+            if (node->pair->key == key)
+                return node->pair->value;
+            node = node->next;
+        }
+        return "";
+    }
+
+    /// @return The length of the list
+    int Length()
+    {
+        int length = 0;
+        DLLNode *node = head;
+        while (node != nullptr)
+        {
+            length++;
+            node = node->next;
+        }
+        return length;
+    }
+
+    /// @return string representation of the list
+    string Repr()
+    {
+        string s;
+        DLLNode *node = head;
+        while (node != nullptr)
+        {
+            s += node->Repr() + ", ";
+            node = node->next;
+        }
+        s.pop_back();
+        s.pop_back();
+        return s;
+    }
+};
 
 class Dict
 {
 public:
     int size;
-    vector<KVPair> vec;
-    Dict(string key, string value, int size)
+    DoublyLinkedList *arr;
+    Dict(int size) : size(size), arr(new DoublyLinkedList[size]) {}
+
+    ~Dict()
     {
-        this->size = size;
-        vec.resize(size * sizeof(KVPair));
-        int index = Hash(key) % size;
-        vec[index].key = key;
-        vec[index].value = value;
+        delete[] arr;
     }
+
+    /// @brief Find the value associated with the given key
+    /// @param key The key to find
+    /// @return The value associated with the given key, or an empty string if not found
     string Get(string key)
     {
         int index = Hash(key) % size;
-        if (vec[index].key == key)
-            return vec[index].value;
-        return "";
+        return arr[index].Get(key);
     }
+
+    /// @brief Set the value associated with the given key
+    /// @param key The key to set
+    /// @param value The value to set
     void Set(string key, string value)
     {
         int index = Hash(key) % size;
-        vec[index].key = key;
-        vec[index].value = value;
+        DLLNode *node = arr[index].Find(key);
+        if (node) // if the key is already in the dictionary
+            node->Set(new KVPair{key, value});
+        else
+            arr[index].Append(new KVPair{key, value});
     }
 };
 
@@ -80,14 +204,7 @@ int main()
     int len;
     cout << "Enter length of HashMap: ";
     cin >> len;
-    string key, value;
-    cout << "Enter initial key: ";
-    while (key.empty())
-        getline(cin, key);
-    cout << "Enter initial value: ";
-    while (value.empty())
-        getline(cin, value);
-    Dict dict(key, value, len);
+    Dict dict(len);
     while (true)
     {
         string key, value;
