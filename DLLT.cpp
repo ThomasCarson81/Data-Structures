@@ -30,16 +30,11 @@ public:
 
     void Delete()
     {
-        if (prev) // if node is not head
-        {
+        if (prev != nullptr)   // if node is not head
             prev->next = next; // link previous node to next
-        }
-        if (next) // if node is not tail
-        {
+        if (next != nullptr)   // if node is not tail
             next->prev = prev; // link next node to previous
-        }
         delete pair;
-        cout << "Deleted node: " << Repr() << endl;
     }
 
     void Link(DLLNode *prevNode, DLLNode *nextNode)
@@ -81,31 +76,27 @@ public:
         }
         else
         {
-            tail->Link(tail, node);
+            tail->next = node;
+            node->prev = tail;
             tail = node;
         }
     }
 
-    /// @brief remove node with given key
-    /// @param key key of node to be removed
-    void Remove(string key)
+    /// @brief Find a node with the given key
+    /// @param key Key to find
+    /// @return The node with the given key, or nullptr if not found
+    DLLNode *Find(string key)
     {
-        if (head == nullptr)
+        DLLNode *node = head;
+        while (node) // while node is not null
         {
-            cout << "Cannot delete from empty list" << endl;
-            return;
-        }
-        DLLNode *loopnode = head;
-        while (loopnode) // while loopnode is not null
-        {
-            if (loopnode->pair->key == key)
+            if (node->pair->key == key)
             {
-                loopnode->Delete();
-                cout << "found " << key << endl;
-                break;
+                return node;
             }
-            loopnode = loopnode->next;
+            node = node->next;
         }
+        return nullptr; // Key not found
     }
 
     /// @return The length of the list
@@ -139,14 +130,15 @@ public:
 
 int main()
 {
-    DoublyLinkedList list;
+    // DoublyLinkedList list;
 
-    list.Append(new KVPair{"key1", "value1"});
-    list.Append(new KVPair{"key2", "value2"});
-    list.Append(new KVPair{"key3", "value3"});
-    list.Append(new KVPair{"key4", "value4"});
+    // list.Append(new KVPair{"key1", "value1"});
+    // list.Append(new KVPair{"key2", "value2"});
+    // list.Append(new KVPair{"key3", "value3"});
+    // list.Append(new KVPair{"key4", "value4"});
 
-    list.Remove("key1"); // doesn't work
-
-    cout << list.Repr() << endl;
+    // DLLNode *node = list.Find("key3");
+    // cout << node->Repr() << endl;
+    // node->Delete();
+    // cout << list.Repr() << endl;
 }
