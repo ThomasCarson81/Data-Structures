@@ -36,7 +36,7 @@ void Link(DLLNode *node1, DLLNode *node2)
     node1->next = node2;
     node2->prev = node1;
 }
-void Set(DLLNode *node, *KVPair pair)
+void Set(DLLNode *node, KVPair *pair)
 {
     node->pair = pair;
 }
